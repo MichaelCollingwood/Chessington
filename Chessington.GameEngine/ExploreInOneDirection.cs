@@ -19,6 +19,10 @@ namespace Chessington.GameEngine.Tests.Pieces
                 nextSquare = iterator(nextSquare, direction);
             }
 
+            if (CheckCapture(nextSquare.Row,nextSquare.Col,board))
+            {
+                squareList.Add(nextSquare);
+            }
             return squareList;
         }
 
@@ -48,7 +52,13 @@ namespace Chessington.GameEngine.Tests.Pieces
         
         private static bool CheckPosition(int row, int col, Board board)
         {
-            return row < GameSettings.BoardSize && row >= 0 && col < GameSettings.BoardSize && col >= 0 && board.GetPiece(Square.At(row,col)) == null;
+            return row < GameSettings.BoardSize && row >= 0 && col < GameSettings.BoardSize && col >= 0 
+                   && board.GetPiece(Square.At(row,col)) == null;
+        }
+        private static bool CheckCapture(int row, int col, Board board)
+        {
+            return row < GameSettings.BoardSize && row >= 0 && col < GameSettings.BoardSize && col >= 0 
+                   && (board.GetPiece(Square.At(row,col)).Player != board.CurrentPlayer);
         }
     }
 }
