@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using Chessington.GameEngine.Tests.Pieces;
 
 namespace Chessington.GameEngine.Pieces
 {
@@ -10,40 +11,13 @@ namespace Chessington.GameEngine.Pieces
 
         public override IEnumerable<Square> GetAvailableMoves(Board board)
         {
-            var initialRow = board.FindPiece(this).Row;
-            var initialCol = board.FindPiece(this).Col;
             var availableMoves = new List<Square>();
-
-            for (var i = -GameSettings.BoardSize; i <= GameSettings.BoardSize; i++)
+            foreach (var direction in new List<int>{0,1,2,3,4,5,6,7})
             {
-                if (CheckPosition(initialRow + i, initialCol + i))
-                {
-                    availableMoves.Add(Square.At(initialRow + i, initialCol + i));
-                }
-
-                if (CheckPosition(initialRow + i, initialCol - i))
-                {
-                    availableMoves.Add(Square.At(initialRow + i, initialCol - i));
-                }
-                
-                if (CheckPosition(initialRow + i, initialCol))
-                {
-                    availableMoves.Add(Square.At(initialRow + i, initialCol));
-                }
-                
-                if (CheckPosition(initialRow , initialCol + i))
-                {
-                    availableMoves.Add(Square.At(initialRow, initialCol + i));
-                }
+                availableMoves.AddRange(ExploreInOneDirection.ExploreOneDirection(board,board.FindPiece(this),direction));
             }
-            availableMoves.RemoveAll(x => x == Square.At(initialRow,initialCol));
 
             return availableMoves;
-        }
-        
-        private bool CheckPosition(int row, int col)
-        {
-            return row < GameSettings.BoardSize && row >= 0 && col < GameSettings.BoardSize && col >= 0;
         }
     }
 }

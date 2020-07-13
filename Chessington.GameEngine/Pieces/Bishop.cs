@@ -20,10 +20,6 @@ namespace Chessington.GameEngine.Pieces
 
         public Bishop(Player player)
             : base(player) { }
-
-        private bool CheckPosition(int row, int col)
-        {
-            return row < GameSettings.BoardSize && row >= 0 && col < GameSettings.BoardSize && col >= 0;
-        }
+        
     }
 }

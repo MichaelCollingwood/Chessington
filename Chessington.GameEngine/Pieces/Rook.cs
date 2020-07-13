@@ -21,10 +21,5 @@ namespace Chessington.GameEngine.Pieces
 
             return availableMoves;
         }
-        
-        private bool CheckPosition(int row, int col)
-        {
-            return row < GameSettings.BoardSize && row >= 0 && col < GameSettings.BoardSize && col >= 0;
-        }
     }
 }
