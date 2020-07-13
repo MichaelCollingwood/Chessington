@@ -18,7 +18,7 @@ namespace Chessington.GameEngine.Pieces
             {
                 for (int j = -1; j <= 1; j++)
                 {
-                    if (CheckPosition(initialRow + i, initialCol + j))
+                    if (Board.CheckPosition(initialRow + i, initialCol + j, board))
                     {
                         availableMoves.Add(Square.At(initialRow + i, initialCol + j));
                     }
@@ -28,10 +28,6 @@ namespace Chessington.GameEngine.Pieces
             availableMoves.RemoveAll(x => x == Square.At(initialRow,initialCol));
             
             return availableMoves;
-        }
-        private bool CheckPosition(int row, int col)
-        {
-            return row < GameSettings.BoardSize && row >= 0 && col < GameSettings.BoardSize && col >= 0;
         }
     }
 }

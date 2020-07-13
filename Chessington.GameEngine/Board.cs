@@ -65,6 +65,12 @@ namespace Chessington.GameEngine
             OnCurrentPlayerChanged(CurrentPlayer);
         }
         
+        public static bool CheckPosition(int row, int col, Board boardToCheck)
+        {
+            return row < GameSettings.BoardSize && row >= 0 && col < GameSettings.BoardSize && col >= 0 &&
+                   boardToCheck.GetPiece(Square.At(row,col)) == null;
+        }
+        
         public delegate void PieceCapturedEventHandler(Piece piece);
         
         public event PieceCapturedEventHandler PieceCaptured;

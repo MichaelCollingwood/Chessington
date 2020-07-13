@@ -16,18 +16,13 @@ namespace Chessington.GameEngine.Pieces
             {
                 var row = KnightPosition(board.FindPiece(this), i).Row;
                 var col = KnightPosition(board.FindPiece(this), i).Col;
-                if (CheckPosition(row, col))
+                if (Board.CheckPosition(row, col, board))
                 {
                     availableMoves.Add(Square.At(row,col));
                 }
             }
 
             return availableMoves;
-        }
-        
-        private bool CheckPosition(int row, int col)
-        {
-            return row < GameSettings.BoardSize && row >= 0 && col < GameSettings.BoardSize && col >= 0;
         }
 
         private Square KnightPosition(Square initialPosition, int direction)
