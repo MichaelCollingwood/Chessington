@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using Chessington.GameEngine.Tests.Pieces;
 
 namespace Chessington.GameEngine.Pieces
 {
@@ -16,18 +17,8 @@ namespace Chessington.GameEngine.Pieces
             var initialCol = board.FindPiece(this).Col;
             var availableMoves = new List<Square>();
 
-            for (var i = -GameSettings.BoardSize; i <= GameSettings.BoardSize; i++)
-            {
-                if (CheckPosition(initialRow, initialCol + i))
-                {
-                    availableMoves.Add(Square.At(initialRow, initialCol + i));
-                }
-
-                if (CheckPosition(initialRow + i, initialCol))
-                {
-                    availableMoves.Add(Square.At(initialRow + i, initialCol));
-                }
-            }
+            var explorer = ExploreInOneDirection();
+            
             availableMoves.RemoveAll(x => x == Square.At(initialRow,initialCol));
 
             return availableMoves;
