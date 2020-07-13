@@ -5,13 +5,13 @@ namespace Chessington.GameEngine.Tests.Pieces
 {
     public class ExploreInOneDirection
     {
-        public IEnumerable<Square> ExploreOneDirection(Board board, Square initialSquare, int direction)
+        public static IEnumerable<Square> ExploreOneDirection(Board board, Square initialSquare, int direction)
         {
             var squareList = new List<Square>();
             var nextSquare = iterator(initialSquare, direction);
             
             while (true) {
-                if (!CheckPosition(nextSquare.Row, nextSquare.Col))
+                if (!CheckPosition(nextSquare.Row, nextSquare.Col, board))
                 {
                     break;
                 }
@@ -22,7 +22,7 @@ namespace Chessington.GameEngine.Tests.Pieces
             return squareList;
         }
 
-        private Square iterator(Square square, int direction)
+        private static Square iterator(Square square, int direction)
         {
             switch (direction)
             {
@@ -43,12 +43,12 @@ namespace Chessington.GameEngine.Tests.Pieces
                 case 7: 
                     return Square.At(square.Row+1, square.Col-1);
             }
-            
+            return new Square();
         }
         
-        private bool CheckPosition(int row, int col)
+        private static bool CheckPosition(int row, int col, Board board)
         {
-            return row < GameSettings.BoardSize && row >= 0 && col < GameSettings.BoardSize && col >= 0;
+            return row < GameSettings.BoardSize && row >= 0 && col < GameSettings.BoardSize && col >= 0 && board.GetPiece(Square.At(row,col)) == null;
         }
     }
 }

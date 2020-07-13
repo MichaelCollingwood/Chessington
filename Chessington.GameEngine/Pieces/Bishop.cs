@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using Chessington.GameEngine.Tests.Pieces;
 
 namespace Chessington.GameEngine.Pieces
 {
@@ -8,23 +9,11 @@ namespace Chessington.GameEngine.Pieces
     {
         public override IEnumerable<Square> GetAvailableMoves(Board board)
         {
-            var initialRow = board.FindPiece(this).Row;
-            var initialCol = board.FindPiece(this).Col;
             var availableMoves = new List<Square>();
-
-            for (var i = -GameSettings.BoardSize; i <= GameSettings.BoardSize; i++)
+            foreach (var direction in new List<int>{1,3,5,7})
             {
-                if (CheckPosition(initialRow + i, initialCol + i))
-                {
-                    availableMoves.Add(Square.At(initialRow + i, initialCol + i));
-                }
-
-                if (CheckPosition(initialRow + i, initialCol - i))
-                {
-                    availableMoves.Add(Square.At(initialRow + i, initialCol - i));
-                }
+                availableMoves.AddRange(ExploreInOneDirection.ExploreOneDirection(board,board.FindPiece(this),direction));
             }
-            availableMoves.RemoveAll(x => x == Square.At(initialRow,initialCol));
 
             return availableMoves;
         }
