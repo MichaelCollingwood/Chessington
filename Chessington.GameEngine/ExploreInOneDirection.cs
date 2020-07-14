@@ -50,15 +50,15 @@ namespace Chessington.GameEngine.Tests.Pieces
             return new Square();
         }
         
-        private static bool CheckPosition(int row, int col, Board board)
+        public static bool CheckPosition(int row, int col, Board board)
         {
             return row < GameSettings.BoardSize && row >= 0 && col < GameSettings.BoardSize && col >= 0 
                    && board.GetPiece(Square.At(row,col)) == null;
         }
-        private static bool CheckCapture(int row, int col, Board board)
+        public static bool CheckCapture(int row, int col, Board board)
         {
             return row < GameSettings.BoardSize && row >= 0 && col < GameSettings.BoardSize && col >= 0 
-                   && (board.GetPiece(Square.At(row,col)).Player != board.CurrentPlayer);
+                   && (board.GetPiece(Square.At(row,col)) == null || board.GetPiece(Square.At(row,col)).Player != board.CurrentPlayer);
         }
     }
 }
