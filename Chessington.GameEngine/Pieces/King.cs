@@ -1,6 +1,5 @@
 using System.Collections.Generic;
 using System.Linq;
-using Chessington.GameEngine.Tests.Pieces;
 
 namespace Chessington.GameEngine.Pieces
 {
@@ -11,24 +10,19 @@ namespace Chessington.GameEngine.Pieces
 
         public override IEnumerable<Square> GetAvailableMoves(Board board)
         {
-            var initialRow = board.FindPiece(this).Row;
-            var initialCol = board.FindPiece(this).Col;
-            var availableMoves = new List<Square>();
-            
-            for (int i = -1; i <= 1; i++)
+            var availableMoves = new List<Square>
             {
-                for (int j = -1; j <= 1; j++)
-                {
-                    if (ExploreInOneDirection.CheckCapture(initialRow + i, initialCol + j, board))
-                    {
-                        availableMoves.Add(Square.At(initialRow + i, initialCol + j));
-                    }
-                }
-            }
-            
-            availableMoves.RemoveAll(x => x == Square.At(initialRow,initialCol));
-            
-            return availableMoves;
+                Square.At(board.FindPiece(this).Row+1,board.FindPiece(this).Col+1),
+                Square.At(board.FindPiece(this).Row+1,board.FindPiece(this).Col),
+                Square.At(board.FindPiece(this).Row+1,board.FindPiece(this).Col-1),
+                Square.At(board.FindPiece(this).Row,board.FindPiece(this).Col+1),
+                Square.At(board.FindPiece(this).Row,board.FindPiece(this).Col-1),
+                Square.At(board.FindPiece(this).Row-1,board.FindPiece(this).Col+1),
+                Square.At(board.FindPiece(this).Row-1,board.FindPiece(this).Col),
+                Square.At(board.FindPiece(this).Row-1,board.FindPiece(this).Col-1)
+            };
+
+            return availableMoves.Where(x=>board.IsValidPosition(x.Row,x.Col) || board.IsValidCapture(x.Row,x.Col));
         }
     }
 }

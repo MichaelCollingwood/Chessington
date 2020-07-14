@@ -64,6 +64,55 @@ namespace Chessington.GameEngine
             CurrentPlayer = movingPiece.Player == Player.White ? Player.Black : Player.White;
             OnCurrentPlayerChanged(CurrentPlayer);
         }
+
+        public List<Square> DiagonalAvailableMoves(Piece piece)
+        {
+            var availableMoves = new List<Square>();
+            availableMoves.AddRange(ExploreOneDirection(piece, x => Square.At(x.Row + 1, x.Col + 1)));
+            availableMoves.AddRange(ExploreOneDirection(piece, x => Square.At(x.Row - 1, x.Col - 1)));
+            availableMoves.AddRange(ExploreOneDirection(piece, x => Square.At(x.Row + 1, x.Col - 1)));
+            availableMoves.AddRange(ExploreOneDirection(piece, x => Square.At(x.Row - 1, x.Col + 1)));
+            return availableMoves;
+        }
+        
+        public List<Square> GridAvailableMoves(Piece piece)
+        {
+            var availableMoves = new List<Square>();
+            availableMoves.AddRange(ExploreOneDirection(piece,x=>Square.At(x.Row+1,x.Col)));
+            availableMoves.AddRange(ExploreOneDirection(piece,x=>Square.At(x.Row-1,x.Col)));
+            availableMoves.AddRange(ExploreOneDirection(piece,x=>Square.At(x.Row,x.Col+1)));
+            availableMoves.AddRange(ExploreOneDirection(piece,x=>Square.At(x.Row,x.Col-1)));
+            return availableMoves;
+        }
+
+        private IEnumerable<Square> ExploreOneDirection(Piece piece, Func<Square, Square> iterator)
+        {
+            var squareList = new List<Square>();
+            var nextSquare = iterator(FindPiece(piece));
+            
+            while (IsValidPosition(nextSquare.Row, nextSquare.Col)) 
+            {
+                squareList.Add(nextSquare);
+                nextSquare = iterator(nextSquare);
+            }
+
+            if (IsValidCapture(nextSquare.Row,nextSquare.Col))
+            {
+                squareList.Add(nextSquare);
+            }
+            return squareList;
+        }
+
+        public bool IsValidPosition(int row, int col)
+        {
+            return row < GameSettings.BoardSize && row >= 0 && col < GameSettings.BoardSize && col >= 0 
+                   && GetPiece(Square.At(row,col)) == null;
+        }
+        public bool IsValidCapture(int row, int col)
+        {
+            return row < GameSettings.BoardSize && row >= 0 && col < GameSettings.BoardSize && col >= 0 
+                   && (GetPiece(Square.At(row,col)) == null || GetPiece(Square.At(row,col)).Player != CurrentPlayer);
+        }
         
         public delegate void PieceCapturedEventHandler(Piece piece);
         

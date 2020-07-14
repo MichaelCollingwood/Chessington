@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using Chessington.GameEngine.Tests.Pieces;
+﻿using System.Collections.Generic;
 
 namespace Chessington.GameEngine.Pieces
 {
@@ -16,13 +13,11 @@ namespace Chessington.GameEngine.Pieces
             var initialRow = board.FindPiece(this).Row;
             var initialCol = board.FindPiece(this).Col;
 
-            if (ExploreInOneDirection.CheckPosition(Operation(initialRow,1), initialCol, board))
+            if (board.IsValidPosition(Operation(initialRow,1), initialCol))
             {
                 availableMoves.Add(Square.At(Operation(initialRow,1), initialCol));
 
-                if ((initialRow == 1 && Player == Player.Black ||
-                    initialRow == GameSettings.BoardSize - 2 && Player == Player.White)
-                    && ExploreInOneDirection.CheckPosition(Operation(initialRow,2), initialCol, board))
+                if (IsPawnStart(initialRow) && board.IsValidPosition(Operation(initialRow,2), initialCol))
                 {
                     availableMoves.Add(Square.At(Operation(initialRow, 2), initialCol));
                 }
@@ -54,6 +49,11 @@ namespace Chessington.GameEngine.Pieces
                 }
             }
             return false;
+        }
+
+        private bool IsPawnStart(int row)
+        {
+            return row == 1 && Player == Player.Black || row == GameSettings.BoardSize - 2 && Player == Player.White;
         }
     }
 }
