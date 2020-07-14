@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.Specialized;
 using System.Linq;
 using Chessington.GameEngine.Pieces;
 
@@ -8,8 +9,16 @@ namespace Chessington.GameEngine
     public class Board
     {
         private readonly Piece[,] board;
+        private bool isDoubleStepActive;
+        private Dictionary<Player,Square> kingSquares = new Dictionary<Player,Square>
+        {
+            {Player.White, Square.At(7,5)},
+            {Player.Black, Square.At(0,5)}
+        };
+        
+        private bool isInCheck;
         public Player CurrentPlayer { get; private set; }
-        public IList<Piece> CapturedPieces { get; private set; } 
+        public IList<Piece> CapturedPieces { get; private set; }
 
         public Board()
             : this(Player.White) { }
@@ -45,16 +54,34 @@ namespace Chessington.GameEngine
         {
             var movingPiece = board[from.Row, from.Col];
             if (movingPiece == null) { return; }
+            
+            // condition for potential en passant
+            if (movingPiece.IsPawn && Math.Abs(from.Row - to.Row) == 2)
+            {
+                movingPiece.DoubleStep = true;
+                isDoubleStepActive = true;
+            }
 
             if (movingPiece.Player != CurrentPlayer)
             {
                 throw new ArgumentException("The supplied piece does not belong to the current player.");
             }
-
+            
+            //en passant victim piece
+            var enPassantVictim = GetPiece(Square.At(Pawn.Operation(to.Row, -1, movingPiece.Player), to.Col));
+            
             //If the space we're moving to is occupied, we need to mark it as captured.
             if (board[to.Row, to.Col] != null)
             {
                 OnPieceCaptured(board[to.Row, to.Col]);
+            }
+            else if (enPassantVictim != null)
+            {
+                if (enPassantVictim.Player != movingPiece.Player && enPassantVictim.DoubleStep && isDoubleStepActive)
+                {
+                    OnPieceCaptured(board[Pawn.Operation(to.Row, -1, movingPiece.Player), to.Col]);
+                    board[Pawn.Operation(to.Row, -1, movingPiece.Player), to.Col] = null;
+                }
             }
 
             //Move the piece and set the 'from' square to be empty.
@@ -63,6 +90,9 @@ namespace Chessington.GameEngine
 
             CurrentPlayer = movingPiece.Player == Player.White ? Player.Black : Player.White;
             OnCurrentPlayerChanged(CurrentPlayer);
+            
+            //set isInCheck as NextPlayer?
+            isInCheck = movingPiece.GetAvailableMoves(this).Contains(kingSquares[CurrentPlayer]);
         }
 
         public List<Square> DiagonalAvailableMoves(Piece piece)
@@ -112,6 +142,17 @@ namespace Chessington.GameEngine
         {
             return row < GameSettings.BoardSize && row >= 0 && col < GameSettings.BoardSize && col >= 0 
                    && (GetPiece(Square.At(row,col)) == null || GetPiece(Square.At(row,col)).Player != CurrentPlayer);
+        }
+        public List<Square> SelectMovesEscapingCheck(List<Square> moves)
+        {
+            if (isInCheck)
+            {
+                return moves.Where(x => x != kingSquares[CurrentPlayer]).ToList();
+            }
+            else
+            {
+                return moves;
+            }
         }
         
         public delegate void PieceCapturedEventHandler(Piece piece);

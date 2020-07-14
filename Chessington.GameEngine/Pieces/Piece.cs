@@ -10,7 +10,8 @@ namespace Chessington.GameEngine.Pieces
         {
             Player = player;
         }
-        
+
+        public bool IsPawn { get; protected set; }
         public bool DoubleStep { get; set; }
         public Player Player { get; private set; }
 
