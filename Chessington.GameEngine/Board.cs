@@ -15,8 +15,6 @@ namespace Chessington.GameEngine
             {Player.White, Square.At(7,5)},
             {Player.Black, Square.At(0,5)}
         };
-        
-        private bool isInCheck;
         public Player CurrentPlayer { get; private set; }
         public IList<Piece> CapturedPieces { get; private set; }
 
@@ -56,6 +54,7 @@ namespace Chessington.GameEngine
             if (movingPiece == null) { return; }
             
             // condition for potential en passant
+            isDoubleStepActive = true;
             if (movingPiece.IsPawn && Math.Abs(from.Row - to.Row) == 2)
             {
                 movingPiece.DoubleStep = true;
@@ -90,9 +89,6 @@ namespace Chessington.GameEngine
 
             CurrentPlayer = movingPiece.Player == Player.White ? Player.Black : Player.White;
             OnCurrentPlayerChanged(CurrentPlayer);
-            
-            //set isInCheck as NextPlayer?
-            isInCheck = movingPiece.GetAvailableMoves(this).Contains(kingSquares[CurrentPlayer]);
         }
 
         public List<Square> DiagonalAvailableMoves(Piece piece)
@@ -143,16 +139,46 @@ namespace Chessington.GameEngine
             return row < GameSettings.BoardSize && row >= 0 && col < GameSettings.BoardSize && col >= 0 
                    && (GetPiece(Square.At(row,col)) == null || GetPiece(Square.At(row,col)).Player != CurrentPlayer);
         }
-        public List<Square> SelectMovesEscapingCheck(List<Square> moves)
+        public IEnumerable<Square> SelectMovesEscapingCheck(Piece piece, List<Square> moves)
         {
-            if (isInCheck)
+            return moves.Where(x => InterruptsCheck(x));
+            //!x.GetAvailableMoves(piece, this).Contains(kingSquares[CurrentPlayer])).ToList();
+        }
+
+        private bool InterruptsCheck(Square square)
+        {
+            /*
+            // if you move the piece there and check every enemy piece cannot reach the king
+            var tempVictimPiece = GetPiece(square);
+            
+            var tempPawn = new Pawn(Player.Black);
+            this.AddPiece(square, new Pawn(CurrentPlayer));
+            tempPawn.MoveTo(this, square);
+            
+            
+            for (var row = 0; row < GameSettings.BoardSize; row++)
             {
-                return moves.Where(x => x != kingSquares[CurrentPlayer]).ToList();
+                for (var col = 0; col < GameSettings.BoardSize; col++)
+                {
+                    
+                    var enemyPiece = GetPiece(Square.At(row, col));
+                    if (enemyPiece != null)
+                    {
+                        if (enemyPiece.Player != CurrentPlayer)
+                        {
+                            if (enemyPiece.GetAvailableMoves(this).Contains(kingSquares[CurrentPlayer]))
+                            {
+                                piece.MoveTo(this, initialSquare);
+                                return false;
+                            }
+                        }
+                    }
+                }
             }
-            else
-            {
-                return moves;
-            }
+            */
+            
+            // piece.MoveTo(this, initialSquare);
+            return true;
         }
         
         public delegate void PieceCapturedEventHandler(Piece piece);

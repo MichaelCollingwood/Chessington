@@ -11,7 +11,7 @@ namespace Chessington.GameEngine.Pieces
 
         public override IEnumerable<Square> GetAvailableMoves(Board board)
         {
-            return board.GridAvailableMoves(this);
+            return board.SelectMovesEscapingCheck(this, board.GridAvailableMoves(this));
         }
     }
 }

@@ -13,7 +13,7 @@ namespace Chessington.GameEngine.Pieces
             availableMoves.AddRange(board.DiagonalAvailableMoves(this));
             availableMoves.AddRange(board.GridAvailableMoves(this));
 
-            return availableMoves;
+            return board.SelectMovesEscapingCheck(this,availableMoves);
         }
     }
 }

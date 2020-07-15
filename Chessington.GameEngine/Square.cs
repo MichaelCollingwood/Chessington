@@ -1,4 +1,7 @@
-﻿namespace Chessington.GameEngine
+﻿using System.Collections.Generic;
+using Chessington.GameEngine.Pieces;
+
+namespace Chessington.GameEngine
 {
     public struct Square
     {
@@ -48,6 +51,19 @@
         public override string ToString()
         {
             return string.Format("Row {0}, Col {1}", Row, Col);
+        }
+
+        public IEnumerable<Square> GetAvailableMoves(Piece piece, Board board)
+        {
+            // set the piece there
+            var initialSquare = board.FindPiece(piece);
+            piece.MoveTo(board, this);
+            
+            // understand where it can move then return piece
+            var availableMoves = piece.GetAvailableMoves(board);
+            piece.MoveTo(board, initialSquare);
+
+            return availableMoves;
         }
     }
 }

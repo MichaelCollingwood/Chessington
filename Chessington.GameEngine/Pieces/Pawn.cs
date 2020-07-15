@@ -36,7 +36,7 @@ namespace Chessington.GameEngine.Pieces
                 }
             }
 
-            return availableMoves;
+            return board.SelectMovesEscapingCheck(this, availableMoves);
         }
 
         public static int Operation(int number1, int number2, Player player)

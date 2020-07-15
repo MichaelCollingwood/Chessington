@@ -21,8 +21,8 @@ namespace Chessington.GameEngine.Pieces
                 Square.At(board.FindPiece(this).Row-1,board.FindPiece(this).Col-2),
                 Square.At(board.FindPiece(this).Row+1,board.FindPiece(this).Col-2)
             };
-
-            return availableMoves.Where(x => board.IsValidCapture(x.Row,x.Col));
+            
+            return board.SelectMovesEscapingCheck(this,availableMoves.Where(x => board.IsValidCapture(x.Row,x.Col)).ToList());
         }
     }
 }

@@ -6,7 +6,7 @@ namespace Chessington.GameEngine.Pieces
     {
         public override IEnumerable<Square> GetAvailableMoves(Board board)
         {
-            return board.DiagonalAvailableMoves(this);
+            return board.SelectMovesEscapingCheck(this,board.DiagonalAvailableMoves(this));
         }
 
         public Bishop(Player player)
